@@ -25,6 +25,7 @@ P_SMIN = float(os.environ.get("P_SMIN", "0.5"))
 P_SMAX = float(os.environ.get("P_SMAX", "1.3"))
 P_TOL = float(os.environ.get("P_TOL", "1.6"))
 P_HOLD = float(os.environ.get("P_HOLD", "0.9"))
+P_SHY = int(os.environ.get("P_SHY", "0"))
 HERE = os.path.dirname(os.path.abspath(__file__))
 PI = math.pi
 TAU = 2 * math.pi
@@ -367,11 +368,11 @@ class Bot:
             ehp = e.get("hp", 1400)
             if e["_d"] < 32:
                 return True
-            if ehp < 300 and hpf > 0.25:
+            if ehp < 500 and hpf > 0.25:
                 return True
             if "lightning" in kinds and e["_d"] < 42 and hpf > 0.3:
                 return True
-            return hp > ehp * 1.8 and hpf > 0.5
+            return hp > ehp * 1.0 and hpf > 0.4
 
         mode = "normal"
         target = None
@@ -387,7 +388,7 @@ class Bot:
                 mode = "retreat"
         elif virtual:
             mode = "retreat"
-        elif hpf < 0.75 and any(t - v[3] < 9 and math.hypot(v[0] - px, v[1] - py) < 170
+        elif hpf < 0.5 and any(t - v[3] < 9 and math.hypot(v[0] - px, v[1] - py) < 170
                                 for v in self.enemies.values()):
             # wounded with enemies around: stay out of their sight and regenerate
             mode = "retreat"
@@ -396,11 +397,11 @@ class Bot:
                        if t - v[3] < 9 and math.hypot(v[0] - px, v[1] - py) < 170]
         else:
             # opportunistic shot at a weak enemy that has not noticed us
-            weak = [e for e in visible if e.get("hp", 1400) < 420 and e["_d"] < 160 and hpf > 0.55]
+            weak = [e for e in visible if e.get("hp", 1400) < 700 and e["_d"] < 200 and hpf > 0.5 and not P_SHY]
             if weak:
                 target = min(weak, key=lambda e: e["_d"])
                 mode = "fight"
-            elif visible and hpf < 0.9:
+            elif visible and (hpf < 0.9 or P_SHY):
                 # someone could see us soon: slip out of their sight
                 mode = "retreat"
                 threats = visible
@@ -536,7 +537,7 @@ class Bot:
                 self.strafe_until = t + self.rng.uniform(P_SMIN, P_SMAX)
             ux, uy = norm(ex - px, ey - py)
             sx, sy = -uy * self.strafe_dir, ux * self.strafe_dir
-            want_d = 26 if "lightning" in kinds and target.get("hp", 1400) < hp else 90
+            want_d = 26 if "lightning" in kinds and target.get("hp", 1400) < hp else 70
             if self.backoff:
                 want_d = 400
             radial = 0.0
