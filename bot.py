@@ -571,9 +571,22 @@ class Bot:
         quiet = t - self.last_enemy_seen_t > 5 and not recently_hit
         crate_target = None
         npc_target = None
+        drop_goal = None
+        for dr in o.get("drops") or []:
+            try:
+                dx_, dy_ = float(dr["pos"][0]), float(dr["pos"][1])
+            except Exception:
+                continue
+            dd = math.hypot(dx_ - px, dy_ - py)
+            if dd < 160 and hpf > 0.45 and (dr.get("lands_in") or 0) < dd / 11.7 + 3:
+                if drop_goal is None or dd < drop_goal[2]:
+                    drop_goal = (dx_, dy_, dd)
         if mode == "normal":
             if zone_urgent:
                 goal = None
+            elif drop_goal is not None:
+                goal = (drop_goal[0], drop_goal[1])
+                label = "drop"
             elif pc is not None and pc[3] < 120:
                 goal = (pc[1]["pos"][0], pc[1]["pos"][1])
                 label = "loot " + pc[1].get("kind", "")
