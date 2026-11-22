@@ -23,7 +23,7 @@ from nav import Nav, RES  # noqa: E402
 NAME = "cover-survivor"
 P_SMIN = float(os.environ.get("P_SMIN", "0.5"))
 P_SMAX = float(os.environ.get("P_SMAX", "1.3"))
-P_TOL = float(os.environ.get("P_TOL", "1.6"))
+P_TOL = float(os.environ.get("P_TOL", "2.0"))
 P_HOLD = float(os.environ.get("P_HOLD", "0.9"))
 P_SHY = int(os.environ.get("P_SHY", "0"))
 HERE = os.path.dirname(os.path.abspath(__file__))
