@@ -50,8 +50,8 @@ def norm(x, y):
 
 
 WEAPON_VALUE = {"lightning": 3.2, "laser": 3.0, "gun": 2.0, "mortar": 0.5}
-UPGRADE_PREF = ["plating", "armor", "nanites", "laser_damage", "laser_charge", "lightning_efficiency",
-                "gun_damage", "gun_rate", "lightning_range", "gyros", "servos", "gun_mag",
+UPGRADE_PREF = ["plating", "gun_damage", "laser_damage", "armor", "gun_rate", "laser_charge",
+                "lightning_efficiency", "nanites", "lightning_range", "gyros", "servos", "gun_mag",
                 "capacitor", "reactor", "gun_velocity", "jets", "lightning_chain", "sensors"]
 
 
