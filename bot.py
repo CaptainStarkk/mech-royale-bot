@@ -451,7 +451,7 @@ class Bot:
                 if nav is not None and z - nav.floor[nav.cell(x, y)] > 2.5:
                     continue  # roof
                 d = math.hypot(x - px, y - py)
-                if d > 75:
+                if d > 120:
                     continue
                 gain = 0.0
                 dslot = None
@@ -574,7 +574,7 @@ class Bot:
         if mode == "normal":
             if zone_urgent:
                 goal = None
-            elif pc is not None and pc[3] < 75:
+            elif pc is not None and pc[3] < 120:
                 goal = (pc[1]["pos"][0], pc[1]["pos"][1])
                 label = "loot " + pc[1].get("kind", "")
             else:
@@ -583,7 +583,7 @@ class Bot:
                 for c in cubes:
                     x, y, z = c["pos"][:3]
                     d = math.hypot(x - px, y - py)
-                    if d < 60 and abs(z - pz) < 3.5 and (bc is None or d < bc[0]):
+                    if d < 90 and abs(z - pz) < 3.5 and (bc is None or d < bc[0]):
                         if nav is None or z - nav.floor[nav.cell(x, y)] < 2.5:
                             bc = (d, (x, y))
                 if bc is not None and (quiet or bc[0] < 20):
@@ -594,11 +594,11 @@ class Bot:
                     for c in crates:
                         x, y, z = c["pos"][:3]
                         d = math.hypot(x - px, y - py)
-                        if d < 45 and (nav is None or z - nav.floor[nav.cell(x, y)] < 2.5):
+                        if d < 70 and (nav is None or z - nav.floor[nav.cell(x, y)] < 2.5):
                             if crate_target is None or d < crate_target[0]:
                                 crate_target = (d, c)
                     # a lone NPC drone, early, healthy
-                    if crate_target is None and hpf > 0.75 and t < 230:
+                    if crate_target is None and hpf > 0.6 and t < 300:
                         for n in npcs:
                             d = math.hypot(n["pos"][0] - px, n["pos"][1] - py)
                             if d < 80 and (npc_target is None or d < npc_target[0]):
