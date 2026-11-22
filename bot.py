@@ -21,6 +21,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from nav import Nav, RES  # noqa: E402
 
 NAME = "cover-survivor"
+P_SMIN = float(os.environ.get("P_SMIN", "0.5"))
+P_SMAX = float(os.environ.get("P_SMAX", "1.3"))
+P_TOL = float(os.environ.get("P_TOL", "1.6"))
+P_HOLD = float(os.environ.get("P_HOLD", "0.75"))
 HERE = os.path.dirname(os.path.abspath(__file__))
 PI = math.pi
 TAU = 2 * math.pi
@@ -529,7 +533,7 @@ class Bot:
             d = target["_d"]
             if t > self.strafe_until:
                 self.strafe_dir = self.rng.choice([-1, 1])
-                self.strafe_until = t + self.rng.uniform(0.5, 1.3)
+                self.strafe_until = t + self.rng.uniform(P_SMIN, P_SMAX)
             ux, uy = norm(ex - px, ey - py)
             sx, sy = -uy * self.strafe_dir, ux * self.strafe_dir
             want_d = 26 if "lightning" in kinds and target.get("hp", 1400) < hp else 90
@@ -753,7 +757,7 @@ class Bot:
                 grange = gw.get("stats", {}).get("range", 230)
                 if d3 < grange * 0.95 and gw.get("ammo", 0) > 0 and gw.get("reload", 0) == 0:
                     g_yaw, g_pitch, _ = self.lead((px, py), muzzle, obj, gw["stats"].get("speed", 252), ch)
-                    if abs(wrap(g_yaw - cur_yaw)) < tol * 1.2 and abs(g_pitch - cur_pitch) < tol * 1.8:
+                    if abs(wrap(g_yaw - cur_yaw)) < tol * P_TOL and abs(g_pitch - cur_pitch) < tol * 1.5 * P_TOL:
                         fire[gslot] = True
             # lightning
             if zslot is not None and ready(zslot):
@@ -847,7 +851,7 @@ class Bot:
             tx, ty = nxc, nyc
         else:
             dn = math.hypot(px - nxc, py - nyc)
-            want = nr * (0.5 if nr > 100 else 0.35)
+            want = nr * (P_HOLD if nr > 100 else 0.35)
             if dn <= want:
                 tx, ty = px, py
             else:
